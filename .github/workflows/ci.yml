@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/aperture-home/package-lock.json
+      - run: npm ci
+        working-directory: apps/aperture-home
+      - run: node simulator/aperture-p2p-simulator-v2.test.js
+      - run: npm run lint
+        working-directory: apps/aperture-home
+      - run: npm run typecheck
+        working-directory: apps/aperture-home
+      - run: npm test
+        working-directory: apps/aperture-home
+      - run: npm run build
+        working-directory: apps/aperture-home

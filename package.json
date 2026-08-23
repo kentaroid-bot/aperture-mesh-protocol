@@ -1,0 +1,13 @@
+{
+  "name": "aperture-mesh-protocol",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test:simulator": "node simulator/aperture-p2p-simulator-v2.test.js",
+    "lint:app": "npm --prefix apps/aperture-home run lint",
+    "typecheck:app": "npm --prefix apps/aperture-home run typecheck",
+    "test:app": "npm --prefix apps/aperture-home test",
+    "build:app": "npm --prefix apps/aperture-home run build",
+    "verify": "npm run test:simulator && npm run lint:app && npm run typecheck:app && npm run test:app && npm run build:app"
+  }
+}

@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aperture P2P Protocol Simulator</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #202124;
+      --muted: #676f76;
+      --line: #d8d8d2;
+      --paper: #f7f6f1;
+      --surface: #ffffff;
+      --surface-soft: #efede6;
+      --green: #1f9d78;
+      --blue: #3f75b5;
+      --red: #c95a3e;
+      --gold: #bc8b2c;
+      --violet: #715a9b;
+      --shadow: 0 10px 28px rgba(32, 33, 36, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1180px, calc(100vw - 32px));
+      margin: 0 auto;
+      padding: 28px 0 36px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.06;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 10px 0 0;
+      color: var(--muted);
+      max-width: 760px;
+      font-size: 15px;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    button {
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .mode-switch button,
+    .run-controls button {
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      padding: 9px 12px;
+      min-width: 92px;
+    }
+
+    .mode-switch button[aria-pressed="true"] {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    aside,
+    .simulation,
+    .timeline {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    aside {
+      padding: 16px;
+      position: sticky;
+      top: 16px;
+    }
+
+    .control-group {
+      display: grid;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .control-group:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--ink);
+      font-weight: 650;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--green);
+    }
+
+    .run-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .run-controls button {
+      border: 1px solid var(--line);
+      background: var(--surface-soft);
+    }
+
+    .run-controls button.primary {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 88px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 27px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .simulation {
+      padding: 14px;
+    }
+
+    .stage-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .phase {
+      font-weight: 750;
+      font-size: 18px;
+    }
+
+    .step {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      border: 1px solid var(--line);
+      background: #fbfaf6;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .protocol-status {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .protocol-status div {
+      min-width: 0;
+      padding: 9px 10px;
+      background: var(--surface-soft);
+    }
+
+    .protocol-status span,
+    .protocol-status strong {
+      display: block;
+      overflow-wrap: anywhere;
+    }
+
+    .protocol-status span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .protocol-status strong {
+      margin-top: 3px;
+      font-size: 13px;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .timeline {
+      margin-top: 14px;
+      padding: 14px;
+    }
+
+    .timeline h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .log {
+      display: grid;
+      gap: 8px;
+      max-height: 168px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .log-entry {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 10px;
+      padding: 8px 0;
+      border-top: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .log-entry:first-child {
+      border-top: 0;
+    }
+
+    .log-entry time {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (max-width: 900px) {
+      header,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .protocol-status {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 520px) {
+      main {
+        width: min(100vw - 20px, 1180px);
+        padding-top: 16px;
+      }
+
+      .mode-switch,
+      .run-controls {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .mode-switch button,
+      .run-controls button {
+        width: 100%;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .protocol-status {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Aperture P2P Protocol Simulator</h1>
+        <p class="subtitle">内面を裁かず、境界・契約・冷却・安全な選択肢幅だけを操作する分散型プロトコルの簡易シミュレーション。</p>
+      </div>
+      <div class="mode-switch" aria-label="scenario">
+        <button type="button" data-mode="home" aria-pressed="true">家庭</button>
+        <button type="button" data-mode="mesh" aria-pressed="false">小国メッシュ</button>
+      </div>
+    </header>
+
+    <section class="metric-grid" aria-label="metrics">
+      <div class="metric"><span id="m1Label">家庭安定度</span><strong id="stability">94%</strong></div>
+      <div class="metric"><span>未処理 Monku</span><strong id="entropy">12</strong></div>
+      <div class="metric"><span id="m3Label">安全な選択肢幅</span><strong id="trust">82%</strong></div>
+      <div class="metric"><span id="m4Label">プロトコル乗っ取りリスク</span><strong id="captureRisk">8%</strong></div>
+    </section>
+
+    <div class="layout">
+      <aside aria-label="controls">
+        <div class="control-group">
+          <label>
+            <span class="label-row"><span>境界圧力</span><span id="pressureValue">46</span></span>
+            <input id="pressure" type="range" min="0" max="100" value="46">
+          </label>
+          <label>
+            <span class="label-row"><span>トリップワイヤー閾値</span><span id="thresholdValue">62</span></span>
+            <input id="threshold" type="range" min="20" max="95" value="62">
+          </label>
+          <label>
+            <span class="label-row"><span>自動応答強度</span><span id="strengthValue">58</span></span>
+            <input id="strength" type="range" min="0" max="100" value="58">
+          </label>
+          <label>
+            <span class="label-row"><span>再接続能力</span><span id="coolingValue">72</span></span>
+            <input id="cooling" type="range" min="0" max="100" value="72">
+          </label>
+          <label>
+            <span class="label-row"><span>代替経路の安全性</span><span id="redundancyValue">64</span></span>
+            <input id="redundancy" type="range" min="0" max="100" value="64">
+          </label>
+          <label>
+            <span class="label-row"><span>観測源の独立性</span><span id="oracleValue">68</span></span>
+            <input id="oracle" type="range" min="0" max="100" value="68">
+          </label>
+          <label>
+            <span class="label-row"><span>憲法層の強度</span><span id="constitutionValue">84</span></span>
+            <input id="constitution" type="range" min="0" max="100" value="84">
+          </label>
+          <label>
+            <span class="label-row"><span>Safety Bridge TTL</span><span id="bridgeTtlValue">5</span></span>
+            <input id="bridgeTtl" type="range" min="1" max="10" value="5">
+          </label>
+        </div>
+        <div class="control-group">
+          <div class="run-controls">
+            <button class="primary" type="button" id="stepButton">1ステップ</button>
+            <button type="button" id="autoButton" aria-pressed="false">自動実行</button>
+            <button type="button" id="eventButton">摩擦イベント</button>
+            <button type="button" id="safetyButton">重大SOS</button>
+            <button type="button" id="falseReportButton">誤報テスト</button>
+            <button type="button" id="resetButton">リセット</button>
+          </div>
+        </div>
+      </aside>
+
+      <div>
+        <section class="simulation" aria-label="simulation stage">
+          <div class="stage-head">
+            <div class="phase" id="phase">Normal Phase</div>
+            <div class="step" id="step">step 0</div>
+          </div>
+          <svg id="network" viewBox="0 0 760 420" role="img" aria-label="P2P network simulation"></svg>
+          <div class="legend">
+            <span><i class="swatch" style="background: var(--green)"></i>安全接続</span>
+            <span><i class="swatch" style="background: var(--gold)"></i>摩擦蓄積</span>
+            <span><i class="swatch" style="background: var(--red)"></i>冷却・遮断</span>
+            <span><i class="swatch" style="background: var(--blue)"></i>再接続経路</span>
+            <span><i class="swatch" style="background: var(--violet)"></i>外部安全メッシュ</span>
+          </div>
+          <div class="protocol-status" aria-label="safety protocol status">
+            <div><span>証拠確度</span><strong id="evidenceStatus">待機中</strong></div>
+            <div><span>Bridge権限</span><strong id="scopeStatus">閉鎖</strong></div>
+            <div><span>TTL / 再審査</span><strong id="ttlStatus">0 step</strong></div>
+            <div><span>現在の出口</span><strong id="outcomeStatus">通常接続</strong></div>
+          </div>
+        </section>
+
+        <section class="timeline" aria-label="event timeline">
+          <h2>運用ログ</h2>
+          <div class="log" id="log"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script src="aperture-p2p-simulator-v2.js"></script>
+</body>
+</html>
