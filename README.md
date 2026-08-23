@@ -46,9 +46,10 @@ The project does not define decentralization as replacing one platform operator 
 
 1. [Project overview](docs/00-overview.md)
 2. [Aperture Mesh Civilization Roadmap](docs/aperture-mesh-civilization-roadmap.md)
-3. [Common protocol and simulation design](docs/p2p-aperture-simulation-design.md)
-4. [Household experiment roadmap](docs/aperture-home-experiment-roadmap.md)
-5. [Aperture Home implementation plan](docs/aperture-home-codex-implementation-plan.md)
+3. [Epistemic and Embodied Consensus](docs/epistemic-and-embodied-consensus.md)
+4. [Common protocol and simulation design](docs/p2p-aperture-simulation-design.md)
+5. [Household experiment roadmap](docs/aperture-home-experiment-roadmap.md)
+6. [Aperture Home implementation plan](docs/aperture-home-codex-implementation-plan.md)
 
 ## Repository Layout
 

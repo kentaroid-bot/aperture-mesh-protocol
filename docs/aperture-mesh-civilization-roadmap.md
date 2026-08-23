@@ -8,6 +8,7 @@
 
 - `aperture-home-experiment-roadmap.md`: 一人と家庭で安全に検証する工程
 - `aperture-home-codex-implementation-plan.md`: 家庭用MVPの実装指示
+- `epistemic-and-embodied-consensus.md`: 未解決の差異を保持し、接続可能性を合意するための認識・身体・導入設計
 - `p2p-aperture-simulation-design.md`: 共通プロトコルの設計原理
 - `aperture-mesh-civilization-roadmap.md`: Mesh of Meshesへ拡張する長期構想
 
