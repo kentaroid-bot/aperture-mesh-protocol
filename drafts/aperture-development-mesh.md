@@ -146,6 +146,86 @@ git history         Revisionと判断結果の監査履歴
 
 この対応表を、Git操作の美化に使わない。例えば、履歴が残っていてもmerge権限、ホスティング、資金、秘密情報が一主体へ集中していれば、Development MeshはProtocol Capture状態になり得る。
 
+### 5.1 GitHubとApertureの意思決定フロー
+
+GitHubの開発フローは、提案を共有することと、現在のVersionへ採用することを分離する。この時間的な分離は、ApertureのRevisionフローを理解する参考になる。
+
+| 段階 | GitHubで起きること | Apertureでの意味 | まだ確定していないこと |
+| --- | --- | --- | --- |
+| Monku / Observation | 問題や違和感を認識する | Private Monku | 共有するか、変更が必要か |
+| Local branch | 本流から分けて変更を試す | Local Experiment / Limited Scope | 外部へ見せるか |
+| Commit | 差分と時点を履歴へ固定する | Revision Draftの固定 | 正しさ、公開、採用 |
+| Push | BranchをGitHubへ送る | 外部Meshへの限定公開 | mainへの採用 |
+| Draft PR | 未完成の提案として差分を開く | Public Draft / Hold | Review準備、最終案 |
+| Ready for review | 検討可能な状態を宣言する | Revision Proposal | Consentと採用 |
+| CI | 機械的検査を実行する | Limited Oracle Check | 社会的安全、公平、目的妥当性 |
+| Review | 質問、異議、反例、影響を確認する | Impact Review / Dissent | 必要なConsentが成立するか |
+| Changes requested | 修正が必要だと記録する | Hold / Revision Required | 修正後に採用できるか |
+| Approval | Reviewerが受け入れ可能と表明する | Consent Proofの一部 | 権利侵害がないか、最終Activation |
+| Merge | 差分をmainへ統合する | Version Activation | 現実運用で有効か |
+| Release / Deploy | 利用可能な形で配布する | Connection Contractの発効 | 長期的な結果 |
+| Revert | 採用変更を履歴付きで戻す | Reversible Recovery | 外部で発生した損害の回復 |
+| Fork | 別の履歴と方針で継続する | Exit / Alternative Route | 資源と利用者の実質的可搬性 |
+
+```text
+GitHub
+  Local branch
+    -> Commit
+      -> Push
+        -> Draft PR
+          -> Review / CI / Hold
+            -> Approval
+              -> Merge
+                -> Release
+
+Aperture
+  Local Experiment
+    -> Revision Draft
+      -> Limited Public Connection
+        -> Public Hold
+          -> Impact Review / Oracle Check
+            -> Consent Proof
+              -> Version Activation
+                -> Contract in Operation
+```
+
+`push`は「この案を外部から接続可能にする」操作であり、採用ではない。`merge`は「指定された宛先へ統合する」操作だが、宛先によって意味が変わる。
+
+```text
+feature branch only
+  ローカルまたは限定された実験
+
+remote branch / Draft PR
+  Public Draft。公開されたが未採用
+
+main/drafts/
+  未解決案を公開状態で保持することへの合意
+
+main/docs/
+  現時点のProtocol Versionとしての採用
+
+main/apps/ or main/simulator/
+  実行可能な検証対象としての採用
+```
+
+したがって、`main`へのmergeだけを見て「Protocolとして採用済み」と判断しない。Branch、Review状態、配置先、Status metadataを組み合わせて状態を読む。
+
+### 5.2 チームと一人開発
+
+チーム開発では、pushとmergeの間をAffected NodeのReviewとConsentのために使える。ただし、GitHub上の単純多数や承認数だけで十分とは限らない。個人の権利、秘密情報、安全境界を変更する場合、人数による承認とは別に本人同意とConstitution検査が必要になる。
+
+一人で開発する場合にも、この間隔には意味がある。
+
+- 提案時の勢いと採用判断を時間的に分ける。
+- Codexによる生成とHuman Stewardによる採用を分ける。
+- CIで機械的な反例を確認する。
+- Draftとして公開し、外部からの異議を受け取れるようにする。
+- 未解決ならmainを変えずにHoldできる。
+
+人数にかかわらず、次の区別を維持する。
+
+> Pushは提案を接続可能にする。Mergeは指定されたVersionへ採用する。ApprovalもMergeも、その提案が永続的な真理であることを意味しない。
+
 ---
 
 ## 6. Draft Contract
