@@ -47,4 +47,5 @@ Draftの「Decisions Needed」を確認し、会話だけで確定した扱い�
 
 ## Current Drafts
 
+- [`aperture-development-mesh.md`](aperture-development-mesh.md): Monku、Draft、Git、Codexを用いたWorkspace運用モデル
 - [`aperture-workplace-pilot.md`](aperture-workplace-pilot.md): 小規模事業所を第二の実験環境として扱う提案
