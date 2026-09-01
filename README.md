@@ -55,6 +55,7 @@ The project does not define decentralization as replacing one platform operator 
 
 ```text
 docs/                  protocol ideas, roadmaps, and implementation plans
+drafts/                unimplemented proposals and handoff notes
 simulator/             dependency-free conceptual simulator
 apps/aperture-home/    experimental local-first household PWA
 ```
