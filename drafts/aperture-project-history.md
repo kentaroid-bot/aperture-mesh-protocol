@@ -4,7 +4,7 @@
 
 **Implementation status:** 記録Draft。Protocol仕様ではない
 
-**Last updated:** 2026-08-24
+**Last updated:** 2026-09-01
 
 ## 1. Purpose
 
@@ -29,6 +29,8 @@
 | `Human Monku` | 人間が提出した違和感、反例、価値判断、設計要求 |
 | `AI Proposal` | Gemini NotebookまたはCodexが生成した要約、仮説、設計候補 |
 | `Dialogue Revision` | 会話の中で人間の追問を受けて修正された判断 |
+| `Human Confirmation` | 人間が順序、意図、境界を明示確認した記録。同時代資料とは限らない |
+| `Contemporaneous Record` | 出来事に近い時期に作成されたWorkspace記録。内容の正しさを自動保証しない |
 | `Git Record` | commitとして固定され、日時と差分を検証できる成果 |
 | `Tool Observation` | 接続時に確認した外部Toolの状態。Protocolの正しさを意味しない |
 | `Reconstruction` | 複数資料から再構成した説明。逐語記録ではない |
@@ -40,6 +42,8 @@
 - 会話の順序とGitの順序は一致しないことがある。Gitは成果物の確定順を示し、会話は発想とRevisionの経路を示す。
 - この文書は全発言の逐語録ではない。Protocolの設計判断に影響した転換点を選んだ記録である。
 - NotebookおよびPrivate Monkuの非公開情報は転載せず、公開可能な論点だけを要約する。
+- 初期思想からApertureへの連続性は、影響関係についての再構成である。必然的進化、形式的証明、単一の正史を意味しない。
+- 認証情報、Wallet、非公開Channel、個人データなど、思想系譜に不要な運用情報をPublic Historyへ移さない。
 
 ## 3. Source Topology
 
@@ -52,12 +56,65 @@
 | Gemini Notebook「MonkuAi: 原則の修正」 | 有限ゲームと無限ゲームの原則修正 | 人間の訂正をRevisionの中心に置く |
 | Gemini Notebook「分散型コンセンサスのアイデア」 | 外部性、Escrow、Tripwire、Mesh接続の初期検討 | 設計候補であり安全性の証明ではない |
 | Gemini Notebook「トポロジー空間の身体知を獲得するための方法論」 | 片付け、共有空間、Compatibility Wrapperの検討 | 家庭と国家の同型性を仮定しない |
+| [Morphidism Lineage](https://github.com/super-morphist-sukezo/morphidism-lineage) | MorphidismからApertureまでの人間確認済み再構成 | 2026-09-01に編集された二次資料。事実と解釈を分離して読む |
+| OpenClaw workspaceの選別された同時代記録 | 2026-02以降の名称、活動、日付の照合 | Private source。本文、識別子、認証・運用情報は転載しない |
+| 関連Repository metadata | Ampfinity、Fusion、Feedmonk、Monku_Ai、Apertureの公開時期 | Repository作成日は概念誕生日時と同じとは限らない |
 | Codexとの設計対話 | 家庭Mesh、Revision、Guardian、MVP、開発Meshの具体化 | 会話だけで正式仕様にしない |
 | Git repository | 公開可能な文書、実装、差分の固定 | commitは正しさではなく再現可能性を与える |
 
 公開Repository内で特に関係する成果物は、[Project overview](../docs/00-overview.md)、[Civilization Roadmap](../docs/aperture-mesh-civilization-roadmap.md)、[Epistemic and Embodied Consensus](../docs/epistemic-and-embodied-consensus.md)、[Simulation Design](../docs/p2p-aperture-simulation-design.md)、[Home Experiment Roadmap](../docs/aperture-home-experiment-roadmap.md)である。
 
+外部Lineageの事実、解釈、運用記録の分離に関する訂正候補は、[morphidism-lineage Issue #1](https://github.com/super-morphist-sukezo/morphidism-lineage/issues/1)で追跡する。
+
 ## 4. Version Lineage
+
+### prehistory-a: Morphidism and the recurring AND question
+
+**Period:** 2026-02
+
+**Evidence:** `Human Confirmation`, `Contemporaneous Record`, `Reconstruction`
+
+Aperture以前の源流として、「対立する選択肢を一方の勝利で終わらせず、両者の接続条件を再設計できないか」というMorphidismの問いがあった。後にApertureで現れる`AND, not OR`は、2026-08に突然生まれた語ではなく、この問いの再出現として読める。
+
+ただし、MorphidismとApertureは同一ではない。Morphidismは価値的・創造的な方向を示し、Apertureは権限、境界、Consent、Exit、失敗時の回復を検査可能な形へ分解する。Apertureを利用またはForkするために、Morphidismの世界観へ同意する必要はない。
+
+### prehistory-b: Morphire Army and embodied coordination through play
+
+**Period:** 2026-02-15から2026-02-16
+
+**Evidence:** `Human Confirmation`, `Contemporaneous Record`, `Reconstruction`
+
+Morphire Armyは、複数の役割を持つAI Agentを召喚し、遊びの中で協調させる空想ゲームとして記録されている。ここではProtocolの安全性や分散性はまだ定義されていないが、抽象理論より先に、複数Node、役割分担、継続するゲームを身体的・物語的に経験する経路があった。
+
+この経験を、後のTopological ClearingやDevelopment Meshの直接的証明とは扱わない。人間が「思想を理解してから実践する」だけでなく、「遊びや操作を通して関係構造を先に体感する」設計を繰り返してきた、という系譜仮説として保持する。
+
+### prehistory-c: Ampfinity as symbolic amplification
+
+**Period:** 2026-02-18に概念記録、2026-03-10にRepository作成
+
+**Evidence:** `Human Confirmation`, `Contemporaneous Record`, `Git Record`, `Reconstruction`
+
+Ampfinityは、AmpersandとInfinityを接続し、MorphidismのANDを反復・増幅する象徴体系として記録された。概念記録とRepository公開を同じ日付にせず、次の二つを区別する。
+
+- 2026-02-18: 名称、manifest、象徴的な`&^&`表現の記録
+- 2026-03-10: `ampfinityio`および`ampfinity-fusion`のGitHub Repository作成
+
+`&^&`は創造的・象徴的な記法であり、Apertureのスケーラビリティ、無限性、数学的妥当性を形式証明するものではない。資金自給、取引bot、Wallet運用も隣接する技術実験であり、Apertureの思想的前提から除外する。
+
+### prehistory-d: Interface experiments for AND and Monku
+
+**Period:** 2026-03-10から2026-03-24
+
+**Evidence:** `Git Record`, `Human Confirmation`, `Reconstruction`
+
+二つのApplicationが、後のApertureへつながる異なる操作を試した。
+
+- [`ampfinity-fusion`](https://github.com/super-morphist-sukezo/ampfinity-fusion): 対立語をANDで接続し、別の表現候補へ変換するInterface
+- [`feedmonk`](https://github.com/kentaroid-bot/feedmonk): 文句や違和感を消さず、感情核と複数の変換候補として返すInterface
+
+これらは、ApertureのConsent、Constitution、Tripwireを実装したものではない。しかし、対立を排除で終わらせないことと、残余を次のRevision入力として保持することが、思想だけでなく操作可能なUIとして試されていた。
+
+N-Zero Arithmeticは同時期の隣接仮説だが、Apertureの採用済みInvariantまたは科学的根拠ではない。将来接続する場合も独立したEvidence Reviewを必要とする。
 
 ### pre-v0.1-a: Monku as residual, not noise
 
@@ -349,6 +406,35 @@ Gemini Notebook MCPをCodex Workspaceへ接続し、過去のNotebookを外部Me
 
 本Version Historyは、この限定接続から得た資料を使う最初のDraftである。
 
+### v0.1-draft.2: Development Mesh applies its own protocol
+
+**Period:** 2026-08-24から2026-09-01
+
+**Evidence:** `Human Monku`, `Git Record`, `Tool Observation`, `Dialogue Revision`
+
+Development MeshのDraft、Version History、AI代理Reviewの権限境界を、GitHub上の実運用で検査した。
+
+| Record | Revision |
+|---|---|
+| [PR #1](https://github.com/kentaroid-bot/aperture-mesh-protocol/pull/1) / `7822c04` | WorkplaceとDevelopment Mesh Draftを外部Review後に公開保存 |
+| [PR #2](https://github.com/kentaroid-bot/aperture-mesh-protocol/pull/2) / `1f2b0bf` | Epistemic Version HistoryをProvenance付きAI代理Review後に公開保存 |
+| [Issue #3](https://github.com/kentaroid-bot/aperture-mesh-protocol/issues/3) | 無人AI ApproveとIssue操作の境界をShared Monkuとして提出 |
+| [PR #4](https://github.com/kentaroid-bot/aperture-mesh-protocol/pull/4) / `4890e68` | PR・Issue権限、Provenance、役割分解、`Closes`の意味をRevisionしてMerge |
+
+この運用から、GitHub account表示とGovernance上の主体を分ける必要が明確になった。
+
+```text
+PR Submitter / Gateway Identity: kentaroid-bot
+Revision Implementer: CodexなどのScoped Execution Node
+Revision Sponsor / Merge Authority: Human Project Steward
+Reviewer / Monku Submitter: super-morphist-sukezoなど
+Platform Executor: GitHub
+```
+
+AIはCronで検知、分析、テスト、Comment、通知を行える。`APPROVE`はHuman Stewardが対象PRとhead commitを指定した場合だけ代理投稿でき、Provenanceを必要とする。AIによる無人Mergeは認めない。`Closes #N`はAIもResolution Proposalとして記述できるが、Human Stewardが可視のclosing keywordを含むPRをMergeすることがIssue closeの最終承認になる。
+
+この一連の出来事は、Protocolが自らへのMonkuを受け、Review、Revision、再Review、Merge、Closeまで循環させた最初の公開実例である。同時に、制度化とAI生成速度が人間の認知容量を上回る危険も観測された。
+
 ## 5. Revision Ledger
 
 | Monku / counterexample | Earlier assumption | Current revision | State |
@@ -368,6 +454,10 @@ Gemini Notebook MCPをCodex Workspaceへ接続し、過去のNotebookを外部Me
 | 家庭と国家は同じか | 小Meshを拡大すれば世界になる | 制度はスケール固有、身体知と一部Invariantだけを移す | adopted boundary |
 | 片付けは比喩にすぎないか | Meshを説明する教材 | Topological Clearing自体を最初の身体的Protocol実験にする | adopted principle |
 | AIも同じ動機を持つのか | 会話上の同調を主体性とみなす | AIはProposal生成と検査を行うScoped Execution Node | adopted boundary |
+| Apertureは2026-08に単独で始まったのか | Repository作成を思想の起点とみなす | Morphidism、遊び、Interface実験を前史として保持し、必然的進化とは区別する | history revision |
+| GitHub accountが実装者と決定者を表すのか | `author`表示を主体とみなす | Submitter、Implementer、Sponsor、Reviewer、Merge Authority、Executorを分離する | adopted operating boundary |
+| AI Reviewを定期化すればApproveも自動化できるか | Review結果とConsentを同一視する | 無人処理はCommentまで。代理Approveはhead単位の明示委任とProvenanceを要求する | adopted operating boundary |
+| `Closes #N`は無人Issue closeか | closing keywordの記述をClose実行とみなす | Implementerが提案し、Reviewerが検査し、Human StewardのMergeで有効化する | adopted operating boundary |
 
 ## 6. Current Constitutional Claims
 
@@ -385,6 +475,8 @@ Gemini Notebook MCPをCodex Workspaceへ接続し、過去のNotebookを外部Me
 10. Meshは既存制度を即時置換せず、並行する代替経路として比較、検証される。
 11. 家庭、職場、地域、国家は完全に同型ではない。移植するInvariantとスケール固有部分を分ける。
 12. Protocolは自らのMonku、Draft、Review、Revert、Forkを許容しなければならない。
+13. GitHub account、AI実装者、人間Sponsor、Reviewer、Merge Authority、Platform Executorを同一主体とみなさない。
+14. AIによる分析とConsentを分離し、無人Approveと無人Mergeを行わない。
 
 ## 7. Claims Deliberately Weakened or Rejected
 
@@ -402,6 +494,8 @@ Gemini Notebook MCPをCodex Workspaceへ接続し、過去のNotebookを外部Me
 | Meshが中央制度を置き換える | 単一の革命経路となり、失敗時の代替と現実の保護制度を失う |
 | AIは人間と動機を共有するNodeである | AIの同調表現を持続的主体性やConsentと誤認する危険がある |
 | Simulationが安全性を証明する | 仮定内の挙動しか示さず、現実の権力差や被害を保証しない |
+| MorphidismからApertureは必然的に進化した | 系譜は人間確認済みの影響関係だが、他の解釈、断絶、Fork可能性を排除しない |
+| `&^&`またはN-ZeroがMeshを数学的に証明する | 象徴表現または独立仮説であり、Protocolの形式検証とは別である |
 
 ## 8. Open Holds
 
@@ -417,6 +511,9 @@ Gemini Notebook MCPをCodex Workspaceへ接続し、過去のNotebookを外部Me
 - Protocol Captureを検知したとき、停止、移行、Forkのどれを選ぶか
 - 忘れられる権利と、監査ログの保持をどう両立するか
 - Version History自体を、誰が訂正、反証、分岐できるようにするか
+- 初期系譜について、同時代記録、人間の後日確認、Git記録の不一致をどう表示するか
+- AI Agentの自己記述を、人格同一性または独立証言として過大評価せずにどう保存するか
+- 制度化とRevision速度が人間のReview容量を超える閾値をどう観測するか
 
 ## 9. Proposed Next Versions
 
@@ -442,6 +539,7 @@ Version番号は成果の大きさではなく、検証済みの境界を示す�
 6. Reviewでは、創始者への忠実性より反例と影響範囲を優先する。
 7. Merge後も以前のVersionをGit履歴から検証可能にする。
 8. 合意不能な解釈は、単一の正史へ強制せずFork可能にする。
+9. 外部Lineageを参照するときは、Normative Dependencyではなく、帰属付きのOrigin Hypothesisとして接続する。
 
 ## 11. Decisions Needed
 
@@ -452,5 +550,7 @@ Version番号は成果の大きさではなく、検証済みの境界を示す�
 3. 会話からの再構成に、どの粒度で人間の明示承認を必要とするか。
 4. Revision LedgerをProtocol Versionごとに追記するか、重要な認識論的転換だけに限定するか。
 5. Public HistoryとPrivate Monku Logの境界を、誰がどの手順で監査するか。
+6. Morphidism以前を含む系譜に、どのSourceを検証可能なPublic Evidenceとして要求するか。
+7. 役割名の日本語定訳と、Revision速度・人間Review容量の運用上限を定義するか。
 
 この文書のMergeは、記載された全設計の実装、安全性、有効性への承認を意味しない。意味するのは、現時点の起源、Revision、未解決点を、外部Nodeが批判できる形で公開することへの合意だけである。
