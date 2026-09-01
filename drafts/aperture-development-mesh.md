@@ -280,6 +280,33 @@ Last Updated
 - 通過した命題と、検査していない命題を区別する。
 - CI成功を公平性、安全性、社会的有効性の証明として扱わない。
 
+### Revision provenance roles
+
+GitHubの`author`表示だけでは、差分を作った主体、公開を依頼した主体、採用を決める主体を区別できない。この文書では、曖昧な`PR Author`を次の役割へ分解する。
+
+| Role | Responsibility |
+| --- | --- |
+| PR Submitter | 認証されたGitHub accountとしてPRを公開する |
+| Revision Implementer | 文書またはコードの差分を作る |
+| Revision Sponsor | Revisionを公開Reviewへ進めることを承認する |
+| Issue Submitter | 元のMonku、問題、要求を提出する |
+| Reviewer | 解決範囲、反例、影響、Issue relationを検査する |
+| Merge Authority | 対象Versionへの採用と、宣言された副作用を最終承認する |
+| Platform Executor | Merge後のbranch更新やIssue closeを機械的に実行する |
+
+現在のWorkspaceでは、`kentaroid-bot`は通常のPR Submitterであり、Development MeshがGitHubへ接続するGateway Identityである。CodexはRevision Implementer、Human Project StewardはRevision SponsorとMerge Authority、GitHubはPlatform Executorとして機能する。`kentaroid-bot`の表示だけから、人間、Codex、または別Agentのどれが差分を作ったかを推定しない。
+
+必要な場合、PR本文へ次のように記録する。
+
+```text
+Submitted-By: kentaroid-bot
+Implemented-By: Codex / Scoped Execution Node
+Sponsored-By: Human Project Steward
+Issue-Relation: Closes #N | Refs #N
+```
+
+外部ContributorがPRを公開する場合は、そのaccountがPR Submitterになる。GitHubのwriteまたはmerge権限は技術的Capabilityであり、それだけでRevision Sponsor、Affected Nodeの代表、またはMerge Authorityになることを意味しない。
+
 ### AI Review and Approval Delegation
 
 GitHub上では、人間が投稿したApprovalと、AIが代理投稿したApprovalを表示だけで区別できない。Approvalは分析結果ではなく、採用判断へ進むConsent Proofの一部であるため、AIの定期実行権限と代理投稿権限を分離する。
@@ -328,12 +355,24 @@ IssueはShared Monkuを提出し、観測とRevision候補を保持する場所�
 - Issueをcloseまたはreopenする。
 - title、body、label、assignee、milestone、lock、pinなど、Issueの意味、分類、担当、可視性、状態を変更する。
 - 他者のCommentを編集、非表示、削除する。
-- PR本文やcommit messageへ`Closes #N`、`Fixes #N`、`Resolves #N`を追加し、mergeによる自動closeを予約する。
 - Issue作成者または参加者の発言を、採用判断、Consent Proof、権利放棄として扱う。
 
 これらの状態変更は、Human Project Stewardが対象Issueと操作をその時点で明示的に委任した場合に限る。委任は指定された一操作で失効し、別Issue、追加変更、将来のCron実行へ継承しない。AIが代理実行する場合は、操作Commentまたは関連PRへProvenance、対象Issue、指示時刻、証拠限界を記録する。
 
-Revision PRは既定で`Refs #N`を使う。Issueのcloseは、Revisionのmergeとは別の判断として扱い、未解決事項、運用観測、反対意見が残っていないかを確認した後に明示的に行う。
+#### Issue relation and closing keywords
+
+`Refs #N`と`Closes #N`はReview段階ではなく、RevisionがIssueをどこまで解決すると主張するかで使い分ける。
+
+- `Closes #N`、`Fixes #N`、`Resolves #N`: このPRだけでIssueのResolution Criteriaを満たすと提案する。
+- `Refs #N`: Issueに関連するが、一部対応、代替案、資料追加、またはmerge後の検証が残る。
+
+Revision Implementerは、人間またはAIのどちらであっても、PR本文へ適切なIssue relationを提案できる。Closing keywordはReview中にIssueを閉じず、default branchへのmerge時にPlatform Executorが実行する予定副作用である。
+
+Reviewerは、Issue SubmitterのMonku、Resolution Criteria、未解決事項とPRのdiffを照合し、relationが不適切なら`CHANGES_REQUESTED`で変更を求める。Issue Submitterの確認は重要なReview evidenceだが、あらかじめAffected NodeまたはIssue Stewardとして指定されていない限り、単独の永久拒否権にはしない。全Collaboratorが異議を提出できる一方、全員の承認を一律には要求しない。
+
+Human Project Stewardがclosing keywordを表示したPRをdefault branchへmergeする行為を、Revision採用とIssue closeの最終承認として扱う。したがって、同じIssueについて別のclose指示を必須にしない。AIによる無人mergeは許可せず、Merge Authorityは対象PR、head commit、closing対象を確認する。
+
+Closing keywordを使わないIssueの直接close、reopen、分類変更は、前節の明示委任を必要とする。
 
 ProvenanceのないAI代理操作、対象外の状態変更、無人自動closeはConsent Proofへ数えずHold対象とする。可逆的に戻せる場合も、無人処理が自己判断で履歴を書き換えず、Human Project Stewardへ報告する。
 
@@ -423,7 +462,8 @@ Development Meshについて定期的に次を確認する。
 - 無人AI Reviewが、ProvenanceのないApprovalまたは事実上のmerge判断へ拡張されていないか。
 - AI代理ApprovalのTarget-Commitが現在のheadと一致し、追加commit後に再利用されていないか。
 - 無人Issue投稿が、Shared Monkuの提出から分類、採否、closeの権限へ拡張されていないか。
-- Issueの自動closeによって、未解決事項や反対意見が不可視化されていないか。
+- Closing keywordがIssueのResolution Criteriaと一致し、未解決事項や反対意見を不可視化していないか。
+- GitHub account、Revision Implementer、Sponsor、Merge Authorityを同一主体として誤認していないか。
 - `main`へ入った文章が権威化し、Revision不能になっていないか。
 - Private Monkuの共有を、参加または貢献の条件にしていないか。
 
