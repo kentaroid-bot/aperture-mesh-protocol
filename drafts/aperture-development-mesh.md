@@ -304,6 +304,39 @@ Cron、scheduler、常駐Agentなど、人間が実行時点で判断しない�
 
 無人Reviewがblocking concernを発見しなかった場合も、`Approved`ではなく、確認した範囲と未確認範囲をCommentとして報告する。
 
+#### Issue operations boundary
+
+IssueはShared Monkuを提出し、観測とRevision候補を保持する場所である。Issueへの書き込み権限は、採用、分類、終了を決める権限と同一ではない。
+
+無人処理は、次のIssue操作を行える。
+
+- Issueを検知、読み取り、要約し、Human Project Stewardへ通知する。
+- 既存Issueへ、観測、質問、反例、情報源、検証結果をCommentする。
+- 新しい違和感をShared Monkuの`idea / proposal`としてIssueに起案し、Human Project Stewardへ報告する。
+
+無人CommentとIssue起案は、次の条件を満たす。
+
+- AIによる無人投稿であることと、確認したscopeを本文に表示する。
+- Issue起案は、未採用のShared Monkuであり、ConsentまたはProtocol決定ではないと表示する。
+- 既存Issueとの重複を確認し、定義されたtemplateと頻度制限を使う。
+- Private Monku、秘密情報、個人情報、認証情報、実在人物の紛争詳細を含めない。
+- Comment、reaction、沈黙をApprovalまたはConsentとして解釈しない。
+- 同一の主張を大量投稿して、人間の注意容量を占有しない。
+
+無人処理は、次のIssue操作を行わない。
+
+- Issueをcloseまたはreopenする。
+- title、body、label、assignee、milestone、lock、pinなど、Issueの意味、分類、担当、可視性、状態を変更する。
+- 他者のCommentを編集、非表示、削除する。
+- PR本文やcommit messageへ`Closes #N`、`Fixes #N`、`Resolves #N`を追加し、mergeによる自動closeを予約する。
+- Issue作成者または参加者の発言を、採用判断、Consent Proof、権利放棄として扱う。
+
+これらの状態変更は、Human Project Stewardが対象Issueと操作をその時点で明示的に委任した場合に限る。委任は指定された一操作で失効し、別Issue、追加変更、将来のCron実行へ継承しない。AIが代理実行する場合は、操作Commentまたは関連PRへProvenance、対象Issue、指示時刻、証拠限界を記録する。
+
+Revision PRは既定で`Refs #N`を使う。Issueのcloseは、Revisionのmergeとは別の判断として扱い、未解決事項、運用観測、反対意見が残っていないかを確認した後に明示的に行う。
+
+ProvenanceのないAI代理操作、対象外の状態変更、無人自動closeはConsent Proofへ数えずHold対象とする。可逆的に戻せる場合も、無人処理が自己判断で履歴を書き換えず、Human Project Stewardへ報告する。
+
 #### Explicitly delegated approval
 
 AIは、Human Project Stewardがその時点で、対象PRと現在のhead commitを特定して明示的に指示した場合に限り、`APPROVE` reviewを代理投稿できる。
@@ -389,6 +422,8 @@ Development Meshについて定期的に次を確認する。
 - AIの提案量によって人間の判断時間と認知容量が圧迫されていないか。
 - 無人AI Reviewが、ProvenanceのないApprovalまたは事実上のmerge判断へ拡張されていないか。
 - AI代理ApprovalのTarget-Commitが現在のheadと一致し、追加commit後に再利用されていないか。
+- 無人Issue投稿が、Shared Monkuの提出から分類、採否、closeの権限へ拡張されていないか。
+- Issueの自動closeによって、未解決事項や反対意見が不可視化されていないか。
 - `main`へ入った文章が権威化し、Revision不能になっていないか。
 - Private Monkuの共有を、参加または貢献の条件にしていないか。
 
