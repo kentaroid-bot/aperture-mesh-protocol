@@ -3,7 +3,7 @@
 ```text
 Status: proposal
 Implementation: partially practiced, not formally adopted
-Last updated: 2026-08-24
+Last updated: 2026-09-01
 Origin: Aperture Mesh Protocolを開発するWorkspace運用についての対話
 ```
 
@@ -161,7 +161,7 @@ GitHubの開発フローは、提案を共有することと、現在のVersion�
 | CI | 機械的検査を実行する | Limited Oracle Check | 社会的安全、公平、目的妥当性 |
 | Review | 質問、異議、反例、影響を確認する | Impact Review / Dissent | 必要なConsentが成立するか |
 | Changes requested | 修正が必要だと記録する | Hold / Revision Required | 修正後に採用できるか |
-| Approval | Reviewerが受け入れ可能と表明する | Consent Proofの一部 | 権利侵害がないか、最終Activation |
+| Approval | Reviewerが受け入れ可能と表明する | Consent Proofの一部 | 権利侵害がないか、最終Activation。AI代理の場合は明示委任とProvenanceが必要 |
 | Merge | 差分をmainへ統合する | Version Activation | 現実運用で有効か |
 | Release / Deploy | 利用可能な形で配布する | Connection Contractの発効 | 長期的な結果 |
 | Revert | 採用変更を履歴付きで戻す | Reversible Recovery | 外部で発生した損害の回復 |
@@ -280,6 +280,63 @@ Last Updated
 - 通過した命題と、検査していない命題を区別する。
 - CI成功を公平性、安全性、社会的有効性の証明として扱わない。
 
+### AI Review and Approval Delegation
+
+GitHub上では、人間が投稿したApprovalと、AIが代理投稿したApprovalを表示だけで区別できない。Approvalは分析結果ではなく、採用判断へ進むConsent Proofの一部であるため、AIの定期実行権限と代理投稿権限を分離する。
+
+#### Unattended review
+
+Cron、scheduler、常駐Agentなど、人間が実行時点で判断しない無人処理は、次の操作まで行える。
+
+- Open PRと新しいcommitを検知する。
+- diff、テスト、CI、依存関係、既知の規約違反を確認する。
+- 反例、未検証事項、影響範囲、要約を生成する。
+- GitHubへCommentまたは非承認Reviewとして投稿する。
+- Human Project Stewardへ判断が必要であることを通知する。
+
+無人処理は、次の操作を行わない。
+
+- GitHubの`APPROVE` reviewを投稿する。
+- 過去の指示、定期実行設定、沈黙、CI成功、著者の意図からApprovalを推定する。
+- `CHANGES_REQUESTED`を制裁または自動的な接続停止として使う。
+- PRをReady化、merge、close、revertする。
+- Branch protectionまたは必要Review数を迂回する。
+
+無人Reviewがblocking concernを発見しなかった場合も、`Approved`ではなく、確認した範囲と未確認範囲をCommentとして報告する。
+
+#### Explicitly delegated approval
+
+AIは、Human Project Stewardがその時点で、対象PRと現在のhead commitを特定して明示的に指示した場合に限り、`APPROVE` reviewを代理投稿できる。
+
+- 委任は一つのPRの一つのhead commitだけに有効とする。
+- 新しいcommitがpushされた時点で、以前の委任は失効する。
+- Standing order、Cron設定、以前のPRへの指示を、将来のApprovalへ流用しない。
+- Approvalの委任はmergeの委任を含まない。
+- Human Project Stewardは、代理Approval後もReady化とmergeを別の判断として扱う。
+
+AI代理ApprovalのReview本文には、最低限次を記録する。
+
+```text
+Provenance: Human Stewardの明示指示によるAI代理投稿
+Target-Commit: <full commit SHA>
+Instruction-Time: <timestamp and timezone>
+Attestation: operational record, not cryptographic proof
+```
+
+Human Project Stewardの法的氏名やPrivateな会話内容は必要としない。公開識別が必要な場合は、合意された役割名またはpseudonymous Steward IDを使う。
+
+ProvenanceがないAI代理Approval、対象commitが一致しないApproval、無人実行の疑いがあるApprovalは、Consent Proofへ数えずHold対象とする。削除またはdismiss権限が利用できない場合も、そのApprovalへ依存してmergeしない。
+
+#### Evidence boundary
+
+Provenance行は、誰がどの権限を主張して投稿したかを監査するためのoperational attestationである。人間の指示が実在したことを暗号学的に証明せず、AI自身による偽装も技術的には防げない。
+
+将来のRevisionでは、署名付き指示、短期Capability Token、公開Instruction Reference、独立した確認Nodeなどを比較する。証明方式が導入されるまでは、Provenanceを安全性の証明ではなく、違反を発見しやすくする最低限の記録として扱う。
+
+#### First operational trial
+
+[PR #2](https://github.com/kentaroid-bot/aperture-mesh-protocol/pull/2)で、Human Stewardの明示指示を受けたAI代理ApprovalにProvenanceを記載する最初の運用試験を行った。[Issue #3](https://github.com/kentaroid-bot/aperture-mesh-protocol/issues/3)は、この境界をShared Monkuとして提出し、Revisionへ変換した記録である。
+
 ---
 
 ## 8. Proposed Working Protocol
@@ -330,6 +387,8 @@ Development Meshについて定期的に次を確認する。
 - GitHubへアクセスできない人のMonkuが構造的に排除されていないか。
 - Forkできても、知識、資産、実行環境が持ち出せない状態ではないか。
 - AIの提案量によって人間の判断時間と認知容量が圧迫されていないか。
+- 無人AI Reviewが、ProvenanceのないApprovalまたは事実上のmerge判断へ拡張されていないか。
+- AI代理ApprovalのTarget-Commitが現在のheadと一致し、追加commit後に再利用されていないか。
 - `main`へ入った文章が権威化し、Revision不能になっていないか。
 - Private Monkuの共有を、参加または貢献の条件にしていないか。
 
@@ -338,7 +397,7 @@ Development Meshについて定期的に次を確認する。
 ## 10. Decisions Needed
 
 1. Draft branchをローカル限定にする条件と、GitHubへpushする条件は何か。
-2. Human Project Stewardの「採用」を、会話、Review、mergeのどこで明示するか。
+2. Operational Provenanceを、署名またはCapability Tokenによる検証可能なConsent Proofへ発展させるか。
 3. Draftを `candidate` へ変更できる主体と必要なReviewは何か。
 4. Issue、Draft文書、Discussionをどのように使い分けるか。
 5. 却下されたMonkuを検索可能に保ちながら、個人情報を残さない方法は何か。
