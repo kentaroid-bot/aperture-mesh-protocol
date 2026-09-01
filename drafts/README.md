@@ -48,5 +48,5 @@ Draftの「Decisions Needed」を確認し、会話だけで確定した扱い�
 ## Current Drafts
 
 - [`aperture-development-mesh.md`](aperture-development-mesh.md): Monku、Draft、Git、Codexを用いたWorkspace運用モデル
-- [`aperture-project-history.md`](aperture-project-history.md): Monku、反例、Revision、Git記録を接続する認識論的Version History
+- [`aperture-project-history.md`](aperture-project-history.md): 外部Lineage参照、Monku、反例、Revision、Git記録を接続する認識論的Version History
 - [`aperture-workplace-pilot.md`](aperture-workplace-pilot.md): 小規模事業所を第二の実験環境として扱う提案
